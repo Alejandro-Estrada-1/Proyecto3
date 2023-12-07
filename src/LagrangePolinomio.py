@@ -49,7 +49,13 @@ def obtener_llave(x_valores, y_valores):
     # Expandir el polinomio para obtener una forma más legible
     polinomio_interpolacion = expand(polinomio_interpolacion)
     
-    # Obtener los coeficientes del polinomio y regresar el término independiente.
-    coeficientes = [polinomio_interpolacion.coeff(x, n) for n in range(polinomio_interpolacion.as_poly().degree(), -1, -1)]    
-    return coeficientes[len(x_valores)-1]
+    # Obtener los coeficientes del polinomio
+    poly_obj = polinomio_interpolacion.as_poly()
+    
+    # Verificar que poly_obj no sea None
+    if poly_obj is not None:
+        coeficientes = poly_obj.coeffs()
+        return coeficientes[-1]
+    else:
+        return polinomio_interpolacion
 
