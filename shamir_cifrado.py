@@ -40,7 +40,7 @@ def generar_polinomio(clave_secreta, t):
 
 def evaluar_polinomio(coeficientes, puntos):
     """
-    Evalúa el polinomio en los puntos dados.
+    Evalúa el polinomio en los puntos dados utilizando la regla de Horner.
 
     Args:
         coeficientes (list): Coeficientes del polinomio.
@@ -49,8 +49,12 @@ def evaluar_polinomio(coeficientes, puntos):
     Returns:
         list: Lista de evaluaciones del polinomio.
     """
-    polinomio = interpolate(list(zip(range(1, len(coeficientes) + 1), coeficientes)), symbols('x'))
-    evaluaciones = [polinomio.subs(symbols('x'), punto) for punto in puntos]
+    evaluaciones = []
+    for punto in puntos:
+        resultado = 0
+        for coeficiente in reversed(coeficientes):
+            resultado = resultado * punto + coeficiente
+        evaluaciones.append(resultado)
     return evaluaciones
 
 def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
