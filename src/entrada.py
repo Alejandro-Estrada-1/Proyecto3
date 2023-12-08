@@ -5,6 +5,15 @@ import os
 from cryptography.hazmat.backends import default_backend
 from LagrangePolinomio import obtener_llave
 
+
+def int_to_bytes(integer):
+    if(integer < 0):
+        return integer.to_bytes(
+            length=(8 + (integer + (integer < 0)).bit_length()) // 8, byteorder='big', signed=True
+        )
+    else:
+        return integer.to_bytes((llave.bit_length() + 7) // 8, byteorder='big')
+
 entrada = sys.argv[1:]
 if len(entrada) == 0:
     sys.exit("Error, argumentos inválidos para cifrar.")
@@ -46,22 +55,30 @@ elif entrada[0] == 'd':
 #    print("x: ", x_valores)
 #    print("y: ", y_valores)
 
+    # Obtener la llave
+    llave = int(obtener_llave(x_valores, y_valores)) ### No coincide con la que se usa para cifrar
+    print("t.i. luke: ", llave)
+    llave = 36289246301075650295155609585671692266665546137538155850562982457236201321785
+    print("t.i. alej: ", llave)
+    clave_secreta = int_to_bytes(llave)
+#    print("clave: ", clave_secreta)
+
     # Descifrar archivo
-    llave = int(obtener_llave(x_valores, y_valores))
-    print("termino independiente: ", llave)
     with open(archivo_cifrado, 'rb') as entrada:
-        texto_plano = entrada.read()
-    clave_secreta = llave.to_bytes(10, byteorder='little')
-    print("clave: ", clave_secreta)
-    cipher = Cipher(algorithms.AES(clave_secreta), modes.CFB(os.urandom(16)), backend=default_backend())
+        texto_cifrado = entrada.read()
+    iv = os.urandom(16)
+    cipher = Cipher(algorithms.AES(clave_secreta), modes.CFB(iv), backend=default_backend())
     decryptor = cipher.decryptor()
-    ciphertext = decryptor.update(texto_plano) + decryptor.finalize()
-    print(ciphertext)
+    texto_descifrado = decryptor.update(texto_cifrado) + decryptor.finalize()
+#    print("texto descifrado: ", texto_descifrado)
 
     # Crear archivo descifrado
     directorio_cifrado = os.path.dirname(archivo_cifrado)
     nombre_base, _ = os.path.splitext(archivo_cifrado)
+    nombre_base = "descifrado" ########### Quitar al final
     archivo_claro = nombre_base + '.txt'
+    with open(archivo_claro, 'wb') as file:
+        file.write(texto_descifrado[16:])
 
     
 else:
