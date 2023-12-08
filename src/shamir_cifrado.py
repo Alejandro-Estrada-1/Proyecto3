@@ -5,8 +5,8 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from secrets import SystemRandom
-from sympy import symbols
-from sympy.polys.polyfuncs import interpolate
+from LagrangePolinomio import evaluar_polinomio
+
 
 def generar_clave_secreta(password):
     """
@@ -21,6 +21,7 @@ def generar_clave_secreta(password):
     digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
     digest.update(password.encode('utf-8'))
     return digest.finalize()
+
 
 def generar_polinomio(clave_secreta, n, t):
     """
@@ -39,20 +40,6 @@ def generar_polinomio(clave_secreta, n, t):
         coeficientes.append(SystemRandom().randint(1, 2**256))
     return coeficientes
 
-def evaluar_polinomio(coeficientes, puntos):
-    """
-    Evalúa el polinomio en los puntos dados.
-
-    Args:
-        coeficientes (list): Coeficientes del polinomio.
-        puntos (list): Lista de puntos en los que se evaluará el polinomio.
-
-    Returns:
-        list: Lista de evaluaciones del polinomio.
-    """
-    polinomio = interpolate(list(zip(range(1, len(coeficientes) + 1), coeficientes)), symbols('x'))
-    evaluaciones = [polinomio.subs(symbols('x'), punto) for punto in puntos]
-    return evaluaciones
 
 def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
     """
@@ -65,6 +52,7 @@ def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
     with open(archivo_evaluaciones, 'w') as file:
         for punto, evaluacion in enumerate(evaluaciones, start=1):
             file.write(f"{punto},{evaluacion}\n")
+
 
 def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, min_puntos_descifrar):
     """

@@ -51,17 +51,11 @@ elif entrada[0] == 'd':
     for linea in evaluaciones:
         evaluacion = linea.split(",")
         x_valores.append(int(evaluacion[0]))
-        y_valores.append(int(evaluacion[1][:-2]))
-#    print("x: ", x_valores)
-#    print("y: ", y_valores)
+        y_valores.append(int(evaluacion[1]))
 
     # Obtener la llave
-    llave = int(obtener_llave(x_valores, y_valores)) ### No coincide con la que se usa para cifrar
-    print("t.i. luke: ", llave)
-    llave = 36289246301075650295155609585671692266665546137538155850562982457236201321785
-    print("t.i. alej: ", llave)
+    llave = int(obtener_llave(x_valores, y_valores))
     clave_secreta = int_to_bytes(llave)
-#    print("clave: ", clave_secreta)
 
     # Descifrar archivo
     with open(archivo_cifrado, 'rb') as entrada:
@@ -70,7 +64,6 @@ elif entrada[0] == 'd':
     cipher = Cipher(algorithms.AES(clave_secreta), modes.CFB(iv), backend=default_backend())
     decryptor = cipher.decryptor()
     texto_descifrado = decryptor.update(texto_cifrado) + decryptor.finalize()
-#    print("texto descifrado: ", texto_descifrado)
 
     # Crear archivo descifrado
     directorio_cifrado = os.path.dirname(archivo_cifrado)
