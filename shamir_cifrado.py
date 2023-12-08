@@ -106,7 +106,6 @@ def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, mi
 
     with open(archivo_cifrado, 'wb') as archivo:
         archivo.write(iv + textocifrado)
-
     print(f'Archivo cifrado: {archivo_cifrado}')
     print(f'Evaluaciones del polinomio guardadas en {archivo_evaluaciones}.')
 
