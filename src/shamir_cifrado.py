@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from secrets import SystemRandom
-from LagrangePolinomio import evaluar_polinomio
+from descifrado import evaluar_polinomio
 
 
 def generar_clave_secreta(password):

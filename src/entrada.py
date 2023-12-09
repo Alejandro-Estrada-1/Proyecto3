@@ -1,66 +1,6 @@
 import sys
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from shamir_cifrado import cifrar_archivo
-import os
-from cryptography.hazmat.backends import default_backend
-from LagrangePolinomio import obtener_llave
-
-
-def int_to_bytes(numero):
-    if(numero < 0):
-        return numero.to_bytes(
-            (8 + (numero + (numero < 0)).bit_length()) // 8, byteorder='big', signed=True
-        )
-    else:
-        return numero.to_bytes(
-            (numero.bit_length() + 7) // 8, byteorder='big'
-        )
-    
-def descifrar(archivo_eval, archivo_cifrado):
-    # Leer archivo con evaluaciones
-    x_valores = []
-    y_valores = []
-    try:
-        file1 = open(archivo_eval, 'r')
-        evaluaciones = file1.readlines()
-        for linea in evaluaciones:
-            evaluacion = linea.split(",")
-            if (len(evaluacion) != 2):
-                raise Exception("Error en la linea '", linea, "'")
-            x_valores.append(int(evaluacion[0]))
-            y_valores.append(int(evaluacion[1]))
-    except Exception as error: 
-        print(error)
-        sys.exit("Ingrese un archivo valido con las evaluaciones.")
-
-
-    # Obtener la llave
-    llave = int(obtener_llave(x_valores, y_valores))
-    clave_secreta = int_to_bytes(llave)
-
-    # Descifrar archivo
-    try:
-        with open(archivo_cifrado, 'rb') as entrada:
-            texto_cifrado = entrada.read()
-        iv = os.urandom(16)
-        cipher = Cipher(algorithms.AES(clave_secreta), modes.CFB(iv), backend=default_backend())
-        decryptor = cipher.decryptor()
-        texto_descifrado = decryptor.update(texto_cifrado) + decryptor.finalize()
-    except FileNotFoundError:
-        print("No se encontro el archivo: ", archivo_cifrado)
-        sys.exit("Ingrese un archivo valido con el mensaje cifrado.")
-    except:
-        print("Ocurrio un error al leer el archivo: ", archivo_cifrado)
-        sys.exit("Ingrese un archivo valido con el mensaje cifrado.")
-
-    # Crear archivo descifrado
-    nombre_base, _ = os.path.splitext(archivo_cifrado)
-    nombre_base = "descifrado" ########### Quitar al final
-    archivo_claro = nombre_base + '.txt'
-    with open(archivo_claro, 'wb') as file:
-        file.write(texto_descifrado[16:])
-    
-    print("Archivo descifrado: ", archivo_claro)
+from descifrado import descifrar
 
 entrada = sys.argv[1:]
 if len(entrada) == 0:
