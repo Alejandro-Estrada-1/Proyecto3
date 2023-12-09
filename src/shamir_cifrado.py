@@ -8,27 +8,26 @@ from secrets import SystemRandom
 from sympy import symbols
 from sympy.polys.polyfuncs import interpolate
 
-def generar_clave_secreta(password):
+def generar_clave_secreta(contrasena):
     """
-    Genera una clave secreta a partir de una contraseña utilizando SHA-256.
+    Genera una clave secreta a partir de una contrasena utilizando SHA-256.
 
     Args:
-        password (str): La contraseña.
+        contrasena (str): La contrasena.
 
     Returns:
         bytes: La clave secreta generada.
     """
-    digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
-    digest.update(password.encode('utf-8'))
-    return digest.finalize()
+    dg = hashes.Hash(hashes.SHA256(), backend=default_backend())
+    dg.update(contrasena.encode('utf-8'))
+    return dg.finalize()
 
-def generar_polinomio(clave_secreta, n, t):
+def generar_polinomio(clave_secreta, t):
     """
     Genera un polinomio con el término independiente como la clave secreta.
 
     Args:
         clave_secreta (bytes): La clave secreta.
-        n (int): Número total de coeficientes del polinomio.
         t (int): Número mínimo de puntos necesarios para descifrar.
 
     Returns:
@@ -41,7 +40,7 @@ def generar_polinomio(clave_secreta, n, t):
 
 def evaluar_polinomio(coeficientes, puntos):
     """
-    Evalúa el polinomio en los puntos dados.
+    Evalúa el polinomio en los puntos dados utilizando la regla de Horner.
 
     Args:
         coeficientes (list): Coeficientes del polinomio.
@@ -50,8 +49,12 @@ def evaluar_polinomio(coeficientes, puntos):
     Returns:
         list: Lista de evaluaciones del polinomio.
     """
-    polinomio = interpolate(list(zip(range(1, len(coeficientes) + 1), coeficientes)), symbols('x'))
-    evaluaciones = [polinomio.subs(symbols('x'), punto) for punto in puntos]
+    evaluaciones = []
+    for punto in puntos:
+        resultado = 0
+        for coeficiente in reversed(coeficientes):
+            resultado = resultado * punto + coeficiente
+        evaluaciones.append(resultado)
     return evaluaciones
 
 def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
@@ -62,9 +65,9 @@ def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
         archivo_evaluaciones (str): Nombre del archivo para guardar las evaluaciones.
         evaluaciones (list): Lista de evaluaciones del polinomio.
     """
-    with open(archivo_evaluaciones, 'w') as file:
+    with open(archivo_evaluaciones, 'w') as archivo:
         for punto, evaluacion in enumerate(evaluaciones, start=1):
-            file.write(f"{punto},{evaluacion}\n")
+            archivo.write(f"{punto},{evaluacion}\n")
 
 def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, min_puntos_descifrar):
     """
@@ -76,37 +79,35 @@ def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, mi
         total_evaluaciones (int): Número total de evaluaciones requeridas (n > 2).
         min_puntos_descifrar (int): Número mínimo de puntos necesarios para descifrar (1 < t ≤ n).
     """
-    password = getpass.getpass("Ingrese la contraseña para generar la llave: ")
-    clave_secreta = generar_clave_secreta(password)
+    contrasena = getpass.getpass("Ingrese la contrasena para generar la llave: ")
+    clave_secreta = generar_clave_secreta(contrasena)
 
-    coeficientes = generar_polinomio(clave_secreta, total_evaluaciones, min_puntos_descifrar)
+    coeficientes = generar_polinomio(clave_secreta, min_puntos_descifrar)
 
     puntos_evaluacion = list(range(1, total_evaluaciones + 1))
-
-    directorio_cifrado = os.path.dirname(archivo_entrada)
-    nombre_evaluaciones = os.path.join(directorio_cifrado, "evaluaciones.frg")
+    
+    archivo_evaluaciones = os.path.join(os.path.dirname(archivo_entrada), os.path.basename(archivo_evaluaciones))
 
     evaluaciones = evaluar_polinomio(coeficientes, puntos_evaluacion)
 
-    guardar_evaluaciones(nombre_evaluaciones, evaluaciones)
+    guardar_evaluaciones(archivo_evaluaciones, evaluaciones)
 
-    with open(archivo_entrada, 'rb') as file:
-        plaintext = file.read()
+    with open(archivo_entrada, 'rb') as archivo:
+        textoplano = archivo.read()
 
     iv = os.urandom(16)
     
     nombre_base, _ = os.path.splitext(archivo_entrada)
     archivo_cifrado = nombre_base + '.aes'
     
-    cipher = Cipher(algorithms.AES(bytes(clave_secreta)), modes.CFB(iv), backend=default_backend())
-    encryptor = cipher.encryptor()
-    ciphertext = encryptor.update(plaintext) + encryptor.finalize()
+    cifrar = Cipher(algorithms.AES(bytes(clave_secreta)), modes.CFB(iv), backend=default_backend())
+    cifrador = cifrar.encryptor()
+    textocifrado = cifrador.update(textoplano) + cifrador.finalize()
 
-    with open(archivo_cifrado, 'wb') as file:
-        file.write(iv + ciphertext)
-
+    with open(archivo_cifrado, 'wb') as archivo:
+        archivo.write(iv + textocifrado)
     print(f'Archivo cifrado: {archivo_cifrado}')
-    print(f'Evaluaciones del polinomio guardadas en {nombre_evaluaciones}.')
+    print(f'Evaluaciones del polinomio guardadas en {archivo_evaluaciones}.')
 
 def main():
     parser = argparse.ArgumentParser(description='Cifrado basado en polinomios y umbral de Shamir.')
