@@ -5,17 +5,18 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
-def evaluar_polinomio(coeficientes, x_puntos):
+def evaluar_polinomio(coeficientes: list, x_puntos: list):
     """
     Evalúa un polinomio utilizando la regla de Horner.
 
-    Parámetros:
-    - coeficientes: Lista de coeficientes del polinomio, donde el elemento en la posición i
-                    es el coeficiente del término x^i.
-    - x_puntos: Valores en los cuales evaluaremos el polinomio.
+    Args:
+        coeficientes (list): Lista de coeficientes del polinomio, donde 
+            el elemento en la posición i es el coeficiente del término x^i.
+        x_puntos (list): Valores en los cuales evaluaremos el polinomio.
 
-    Retorna:
-    - Una lista con el resultado de evaluar el polinomio en cada punto de x_puntos con su orden correspondiente.
+    Returns:
+        list: Una lista con el resultado de evaluar el polinomio 
+        en cada punto de x_puntos con su orden correspondiente.
     """
     y_puntos = []
     for x in x_puntos:
@@ -26,16 +27,18 @@ def evaluar_polinomio(coeficientes, x_puntos):
     return y_puntos
         
         
-def obtener_llave(x_valores, y_valores):
+def obtener_llave(x_valores: list, y_valores: list):
     """
-    Construye el polinomio de interpolación de Lagrange y regresa el término independiente.
+    Construye el polinomio de interpolación de Lagrange 
+    y regresa el término independiente.
 
-    Parámetros:
-    - x_valores: Lista de valores x.
-    - param y_valores: Lista de valores p(x) correspondientes a los valores x.
-    
-    Retorna: 
-    - Término independiente del polinomio de Lagrange (un número entero). 
+    Args:
+        x_valores (list): Lista de valores x.
+        y_valores (list): Lista de valores p(x) 
+            correspondientes a los valores x.
+
+    Returns:
+        int: Término independiente del polinomio de Lagrange. 
     """
 
     # Definir la variable simbólica e inicializar el polinomio
@@ -64,7 +67,16 @@ def obtener_llave(x_valores, y_valores):
         return polinomio_interpolacion
 
 
-def int_to_bytes(numero):
+def int_to_bytes(numero: int):
+    """
+    Convierte un entero a bytes
+
+    Args:
+        numero (int): el entero a convertir
+
+    Returns:
+        bytes: el entero como bytes
+    """
     if(numero < 0):
         return numero.to_bytes(
             (8 + (numero + (numero < 0)).bit_length()) // 8, byteorder='big', signed=True
@@ -74,7 +86,19 @@ def int_to_bytes(numero):
             (numero.bit_length() + 7) // 8, byteorder='big'
         )
     
-def descifrar(archivo_eval, archivo_cifrado):
+def descifrar(archivo_eval: str, archivo_cifrado: str):
+    """
+    Descifra un archivo dado con las evaluaciones de 
+    otro archivo. Luego crea un archivo con el mismo 
+    nombre del cifrado con el mensaje descifrado.
+
+    Args:
+        archivo_eval (str): el archivo con las evaluaciones
+        archivo_cifrado (str): el arcivo cifrado
+
+    Raises:
+        Exception: cuando hay un error en las evaluaciones
+    """
     # Leer archivo con evaluaciones
     x_valores = []
     y_valores = []
