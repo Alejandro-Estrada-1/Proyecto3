@@ -40,13 +40,24 @@ class Test_Cifrado(unittest.TestCase):
             for coef in coeficientes:
                 self.assertIsInstance(coef, int)
     
+    def test_evaluar_polinomio(self):
+        clave_secreta_test = shamir_cifrado.generar_clave_secreta("ContrasenaPolinomio")
+        t = SystemRandom().randint(5,20)
+        polinomio = shamir_cifrado.generar_polinomio(clave_secreta_test, t)
 
-
-
-
-    
+        puntos = []
+        for i in range(t):
+            puntos.append(SystemRandom().randint(1,2**256))
         
+        evaluado = shamir_cifrado.evaluar_polinomio(polinomio, puntos)
         
+        self.assertEqual(t, len(evaluado))
 
+        for i in range(len(puntos)):
+            resultado = 0
+            for coeficiente in reversed(polinomio):
+                resultado = resultado * puntos[i] + coeficiente
+            self.assertEqual(resultado, evaluado[i])
+  
 if __name__ == '__main__':
     unittest.main()
