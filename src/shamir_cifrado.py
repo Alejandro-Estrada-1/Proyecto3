@@ -107,7 +107,7 @@ def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, mi
     iv = os.urandom(16)
     
     nombre_base, _ = os.path.splitext(archivo_entrada)
-    archivo_cifrado = nombre_base + '.aes'
+    archivo_cifrado = nombre_base 
     
     cifrar = Cipher(algorithms.AES(bytes(clave_secreta)), modes.CFB(iv), backend=default_backend())
     cifrador = cifrar.encryptor()
