@@ -116,10 +116,8 @@ def descifrar(archivo_eval: str, archivo_cifrado: str):
         sys.exit("Ingrese un archivo valido con el mensaje cifrado.")
 
     # Crear archivo descifrado
-    nombre_base, _ = os.path.splitext(archivo_cifrado)
-    nombre_base = "descifrado" ########### Quitar al final
-    archivo_claro = nombre_base + '.txt'
-    with open(archivo_cifrado, 'wb') as file:
-        file.write(texto_descifrado[16:])
+    archivo_claro = archivo_cifrado
+    with open(archivo_claro, 'wb') as salida:
+        salida.write(texto_descifrado[16:])
     
     print("Archivo descifrado: ", archivo_claro)
