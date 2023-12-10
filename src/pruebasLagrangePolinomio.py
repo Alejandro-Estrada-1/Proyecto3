@@ -1,6 +1,7 @@
 from secrets import SystemRandom
 import unittest
-from LagrangePolinomio import evaluar_polinomio, obtener_llave
+from descifrado import obtener_llave
+from shamir_cifrado import evaluar_polinomio
 
 class PruebaPolinomioLagrange(unittest.TestCase):
     
@@ -12,7 +13,6 @@ class PruebaPolinomioLagrange(unittest.TestCase):
             
             # Grado del polinomio.
             n = SystemRandom().randint(0, 20)
-            print(n)
             limit = 2**256
             
             # Se agrega el término independiente.
@@ -34,6 +34,13 @@ class PruebaPolinomioLagrange(unittest.TestCase):
             
             # Se verifica que obtener_llave sea correcto.
             self.assertEqual(key, obtener_llave(x_puntos, y_puntos))
+            
+            # Muestra el porcentaje de avance de las pruebas.
+            carga = ""
+            for j in range(i+1):
+                carga+="."
+            print(f"{carga}  {(i+1)*10}%")
+
             
 
 if __name__ == '__main__':

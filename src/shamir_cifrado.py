@@ -5,7 +5,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from secrets import SystemRandom
-from descifrado import evaluar_polinomio
 
 
 def generar_clave_secreta(contrasena):
@@ -23,7 +22,7 @@ def generar_clave_secreta(contrasena):
     return dg.finalize()
 
 
-def generar_polinomio(clave_secreta, n, t):
+def generar_polinomio(clave_secreta, t):
     """
     Genera un polinomio con el término independiente como la clave secreta.
 
@@ -38,6 +37,28 @@ def generar_polinomio(clave_secreta, n, t):
     for _ in range(t - 1):
         coeficientes.append(SystemRandom().randint(1, 2**256))
     return coeficientes
+
+
+def evaluar_polinomio(coeficientes: list, x_puntos: list):
+    """
+    Evalúa un polinomio utilizando la regla de Horner.
+
+    Args:
+        coeficientes (list): Lista de coeficientes del polinomio, donde 
+            el elemento en la posición i es el coeficiente del término x^i.
+        x_puntos (list): Valores en los cuales evaluaremos el polinomio.
+
+    Returns:
+        list: Una lista con el resultado de evaluar el polinomio 
+        en cada punto de x_puntos con su orden correspondiente.
+    """
+    y_puntos = []
+    for x in x_puntos:
+        resultado = 0
+        for coeficiente in reversed(coeficientes):
+            resultado = resultado * x + coeficiente
+        y_puntos.append(resultado)
+    return y_puntos
 
 
 def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
