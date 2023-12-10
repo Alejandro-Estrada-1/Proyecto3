@@ -87,6 +87,8 @@ def descifrar(archivo_eval: str, archivo_cifrado: str):
             evaluacion = linea.split(",")
             if (len(evaluacion) != 2):
                 raise Exception("Error en la linea '", linea, "'")
+            if(linea[0]=="("):
+                break
             x_valores.append(int(evaluacion[0]))
             y_valores.append(int(evaluacion[1]))
     except Exception as error: 

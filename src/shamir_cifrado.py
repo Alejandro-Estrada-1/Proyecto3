@@ -61,7 +61,7 @@ def evaluar_polinomio(coeficientes: list, x_puntos: list):
     return y_puntos
 
 
-def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
+def guardar_evaluaciones(archivo_evaluaciones, evaluaciones, t):
     """
     Guarda las evaluaciones del polinomio en un archivo.
 
@@ -70,9 +70,13 @@ def guardar_evaluaciones(archivo_evaluaciones, evaluaciones):
         evaluaciones (list): Lista de evaluaciones del polinomio.
     """
     with open(archivo_evaluaciones, 'w') as archivo:
+        n=1
         for punto, evaluacion in enumerate(evaluaciones, start=1):
-            archivo.write(f"{punto},{evaluacion}\n")
-
+            if n>t:
+                archivo.write(f"({punto},{evaluacion})\n")
+            else:
+                archivo.write(f"{punto},{evaluacion}\n")
+                n+=1
 
 
 def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, min_puntos_descifrar):
@@ -96,7 +100,7 @@ def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, mi
 
     evaluaciones = evaluar_polinomio(coeficientes, puntos_evaluacion)
 
-    guardar_evaluaciones(archivo_evaluaciones, evaluaciones)
+    guardar_evaluaciones(archivo_evaluaciones, evaluaciones, min_puntos_descifrar)
 
     with open(archivo_entrada, 'rb') as archivo:
         textoplano = archivo.read()
