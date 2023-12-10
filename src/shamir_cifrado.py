@@ -1,4 +1,3 @@
-import argparse
 import getpass
 import os
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -119,15 +118,3 @@ def cifrar_archivo(archivo_entrada, archivo_evaluaciones, total_evaluaciones, mi
     print(f'Archivo cifrado: {archivo_cifrado}')
     print(f'Evaluaciones del polinomio guardadas en {archivo_evaluaciones}.')
 
-def main():
-    parser = argparse.ArgumentParser(description='Cifrado basado en polinomios y umbral de Shamir.')
-    parser.add_argument('archivo_entrada', type=str, help='Nombre del archivo con el documento claro.')
-    parser.add_argument('archivo_evaluaciones', type=str, help='Nombre del archivo para guardar las evaluaciones.')
-    parser.add_argument('total_evaluaciones', type=int, help='Número total de evaluaciones requeridas (n > 2).')
-    parser.add_argument('min_puntos_descifrar', type=int, help='Número mínimo de puntos necesarios para descifrar (1 < t ≤ n).')
-    args = parser.parse_args()
-
-    cifrar_archivo(args.archivo_entrada, args.archivo_evaluaciones, args.total_evaluaciones, args.min_puntos_descifrar)
-
-if __name__ == "__main__":
-    main()
