@@ -119,7 +119,7 @@ def descifrar(archivo_eval: str, archivo_cifrado: str):
     nombre_base, _ = os.path.splitext(archivo_cifrado)
     nombre_base = "descifrado" ########### Quitar al final
     archivo_claro = nombre_base + '.txt'
-    with open(archivo_claro, 'wb') as file:
+    with open(archivo_cifrado, 'wb') as file:
         file.write(texto_descifrado[16:])
     
     print("Archivo descifrado: ", archivo_claro)
