@@ -35,6 +35,12 @@ para correr todas las pruebas unitarias del modelo.
 
 ### Ejecución
 
+Escribir en la consola en la ruta donde se encuentre este README el siguiente comando:
+
+python src\main.py
+
+Con los siguientes argumentos, según lo que se quiera hacer:
+
 Para cifrar el archivo ingrese los siguientes argumentos:
 1. Bandera c.
 2. Nombre del archivo para guardar las evaluaciones.
